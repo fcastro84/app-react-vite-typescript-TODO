@@ -20,7 +20,7 @@
 
 `$ yarn create vite`
 
-TypeScript + SWC
+React + TypeScript + SWC
 
 ## Añadir estilos del TodoMVC
 
