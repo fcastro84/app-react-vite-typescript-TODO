@@ -1,12 +1,14 @@
 import { FilterValue, ID, Todo } from "../interfaces/types"
 
 export const INITIAL_STATE: State = {
+    sync: false,
     todos: [],
     filterSelected: 'all'
 }
 
 export interface State {
-    todos: Todo[]
+    sync: boolean,
+    todos: Todo[],
     filterSelected: FilterValue
 }
 type ActionType = 
@@ -15,11 +17,22 @@ type ActionType =
     { type: 'COMPLETED_TODO', payload: { id: ID, completed: boolean }} |
     { type: 'CLOSED_TODO', payload: { id: ID }} |
     { type: 'FILTER_CHANGE', payload: { filter: FilterValue }} |
+    { type: 'INIT_TODO', payload: { todos: Todo[] }} |
     { type: 'CLEAR_COMPLETED_TODO'}
 
 export const todoReducer = ( state: State, action: ActionType ) => {
 
     switch (action.type) {
+        case 'INIT_TODO':
+            {
+            const { todos } = action.payload
+            return {
+                ...state,
+                todos,
+                sync: false
+            }
+              
+            }
         case 'ADD_NEW_TODO':
             {
                 const { title } = action.payload
@@ -30,7 +43,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
                   }
             return {
                 ...state,
-                todos: [...state.todos, newTodo]
+                todos: [...state.todos, newTodo],
+                sync: true
             }
               
             }
@@ -49,7 +63,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
               
                 return {
                     ...state,
-                    todos: newTodos
+                    todos: newTodos,
+                    sync: true
                 }
                   
             }
@@ -57,7 +72,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
             {
                 return {
                     ...state,
-                    todos: state.todos.filter(element => !element.completed)
+                    todos: state.todos.filter(element => !element.completed),
+                    sync: true
                 }
             }
         case 'COMPLETED_TODO':
@@ -75,7 +91,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
              
                  return {
                     ...state,
-                    todos: newTodos
+                    todos: newTodos,
+                    sync: true
                 }
             }
         case 'CLOSED_TODO':
@@ -84,7 +101,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
 
                 return {
                     ...state,
-                    todos: state.todos.filter( element => element.id !== id)
+                    todos: state.todos.filter( element => element.id !== id),
+                    sync: true
                 }
             }
         case 'FILTER_CHANGE': 
@@ -92,7 +110,8 @@ export const todoReducer = ( state: State, action: ActionType ) => {
                 const { filter } = action.payload
                 return {
                     ...state,
-                    filterSelected: filter
+                    filterSelected: filter,
+                    sync: true
                 }
             }
         default:

@@ -1,10 +1,11 @@
-import { useReducer } from "react"
+import { useEffect, useReducer } from "react"
 import { FilterValue, ID, filters } from "../interfaces/types.d"
 import { INITIAL_STATE, todoReducer } from "../reducer/todoReducer"
+import { fetchTodos, updateTodos } from "../services/todos"
 
 const useTodo = () => {
 
-    const [{ todos, filterSelected }, dispatch] = useReducer(todoReducer, INITIAL_STATE)
+    const [{ todos, filterSelected, sync }, dispatch] = useReducer(todoReducer, INITIAL_STATE)
    
     
     
@@ -32,6 +33,20 @@ const useTodo = () => {
         dispatch({type: 'FILTER_CHANGE', payload: { filter }})
     }
 
+    useEffect(() => {
+        fetchTodos()
+            .then(data => {
+                dispatch({type: 'INIT_TODO', payload: { todos: data }})
+            })
+    }, [])
+
+    useEffect(() => {
+      if(sync){
+        updateTodos({todos})
+            .catch(console.error)
+      }
+    }, [todos, sync])
+    
 
    const filteredTodos = todos.filter( element => {
       if(filterSelected === filters.ACTIVE){
@@ -44,6 +59,7 @@ const useTodo = () => {
   
       return true
     })
+
     const todosPending = filteredTodos.filter(element => !element.completed).length
     const todosCompleted = filteredTodos.some( element => element.completed )
 
