@@ -19,6 +19,7 @@
 ## Inicializar proyecto
 
 `$ yarn create vite`
+
 TypeScript + SWC
 
 ## Añadir estilos del TodoMVC
